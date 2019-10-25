@@ -27,23 +27,34 @@ gồm có các trường cơ bản như sau:
     
 ## Build chương trình
 ```$xslt
-    cd /path/to/bin %% Chuyển working directory thi tới thư mục bin
+    %% Chuyển working directory thi tới thư mục bin
+    cd /path/to/number_normalization/bin 
     .\built.bat     %% Complie các file .erl ở thư mục source thành các file
                     %% thực thi .beam ở thư mục bin.
 ```
 
 ## Thực thi chương trình
-Mở erlang shell và chạy các lệnh sau: 
 ```$xslt
-    cd("/path/to/bin") %% Chuyển working directory tới thư mục bin. 
-    application:start(number_stuff). %% Khởi động ứng dụng.
-    test:do("tel/sip-url")           %% Chuẩn hóa từng URL VD: test:do("sip:00842838830408")
-    test:stress(N)                   %% Với N là số lần lặp lại các bộ test case 
-                                     %% có trong file input.txt
+    %% Chuyển working directory tới thư mục bin. 
+    cd /path/to/number_normalization/bin      
+    %% Khởi động erlang shell và ứng dụng.
+    erl -name rilt@127.0.0.1 -setcookie rilt  -eval "application:start(number_stuff)"
+
+    %% Chuẩn hóa từng URL VD: test:do("sip:00842838830408")          
+    test:do("tel/sip-url", call/cast)
+    %% Chuẩn hóa nhiều URL, với N là số lần lặp lại 
+    %% các bộ test case có trong file input.txt     
+    test:stress(N, call/cast)                   
+                                            
 ```
 
-Kết quả trả về của hàm test:do hay test:stress là thời gian thực thi (microsecond) và kết quả chuẩn 
-hóa tương ứng.
+## Performace test 
+Tiến hành kiểm thử chương trình với test case là 1 tập input.txt gồm 100 URL Sip/tel hỗn hợp và lặp đi lặp lại 
+tập trên trên máy Window 7, Core i3 7100, 8Gb Ram.
+  Kết quả kiểm thử như sau (Thời gian tính bằng mili giây):
 
-    
-        
+| Số lượng testcase | Thời gian thực thi (Call) | Request/Giây (Call) | Thời gian thực thi (Cast) | Request/Giây (Cast) |
+|-------------------|---------------------------|---------------------|---------------------------|---------------------|
+|       10000       |          342,995          |        29155        |          373,992          |        26738        |
+|       100000      |          3228,930         |        30970        |          4819,896         |        20747        |
+|      1000000      |         3168,2927         |        31562        |         33711,045         |        29663        |
