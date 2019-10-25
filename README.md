@@ -8,7 +8,7 @@ Cấu trúc thư mục
 - bin: chứa các file thực thi
 - include: chứa file header,config
 - io: chứa các file input,output
-- src: chưa source code của chương trình 
+- src: chứa source code của chương trình 
 
 ## Config file
 - Chương trình sử dụng file config.json để mô tả các quy tắc chuẩn hóa số điện thoại
@@ -42,7 +42,7 @@ Mở erlang shell và chạy các lệnh sau:
                                      %% có trong file input.txt
 ```
 
-Kết quả trả về của hàm test:do hay test:stress là thời gian thực thi và kết quả chuẩn 
+Kết quả trả về của hàm test:do hay test:stress là thời gian thực thi (microsecond) và kết quả chuẩn 
 hóa tương ứng.
 
     

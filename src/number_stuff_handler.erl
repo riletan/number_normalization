@@ -13,7 +13,7 @@
 -behaviour(gen_server).
 
 %% API
--export([start_link/0, do/1]).
+-export([start_link/0, do/1, normalizing/3]).
 
 %% gen_server callbacks
 -export([init/1,
@@ -22,8 +22,6 @@
   handle_info/2,
   terminate/2,
   code_change/3]).
-
--define(SERVER, ?MODULE).
 
 -record(state, {
   rules_by_op,
@@ -46,10 +44,15 @@
   {ok, Pid :: pid()} | ignore | {error, Reason :: term()}).
 start_link() ->
   gen_server:start_link({local, ?SERVER}, ?MODULE, [], []).
-do(N) when is_list(N)->
-  gen_server:call(?MODULE, {nmz,N});
+
+do({From, N, Data}) when is_list(N)->
+  Normalized = normalizing(N, Data, From),
+%%  io:format("I am ~p~n: ", [self()]),
+  From ! {self(), Normalized};
+%%  gen_server:cast(?SERVER, {respone, From, Normalized});
 do(_command) ->
   not_thing_to.
+
 
 %%%===================================================================
 %%% gen_server callbacks
@@ -130,8 +133,15 @@ handle_call({nmz,N}, _From, State) ->
   {noreply, NewState :: #state{}} |
   {noreply, NewState :: #state{}, timeout() | hibernate} |
   {stop, Reason :: term(), NewState :: #state{}}).
+handle_cast({nmz, From, N}, State) ->
+  spawn(number_stuff_handler, normalizing, [N, State, From]),
+  {noreply, State};
+handle_cast({respone, From, N}, State) ->
+  From ! N,
+  {noreply, State};
 handle_cast(_Request, State) ->
   {noreply, State}.
+
 
 %%--------------------------------------------------------------------
 %% @private
@@ -191,6 +201,8 @@ resultBeatify(#n_context{tel_number = Tel, tag = "sip", operator = Op}) ->
   "sip:" ++ Tel ++ "@" ++ Op ++ ";user=phone".
 
 %%%===================================================================
+normalizing(URL, Data, From) ->
+  From ! normalizing(URL, Data).
 normalizing(URL, Data) ->
 %%  io:format("  -[~p:~p] ~p~n", [?MODULE, ?FUNCTION_NAME, ?LINE, [Rules]]),
   [Tag|Tail] = string:split(URL, ":"),

@@ -130,6 +130,6 @@
     "^190006"   : "gtel",
     "^180006"   : "freeahihi",
     "^00"       : "international",
-    "^\\+"       : "international"
+    "^\\+"      : "international"
   }
 }

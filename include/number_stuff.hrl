@@ -16,6 +16,7 @@
 -define(DEFAULT_MAX_NUM_LEN, "15").
 -define(DEFAULT_AC_FIXED, "3").
 -define(DEFAULT_AC_MOBILE, "2").
+-define(SERVER, number_stuff_server).
 
 -record(n_context, {
   tag = "",
